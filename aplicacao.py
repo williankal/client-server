@@ -11,8 +11,8 @@
 
 
 from enlace import *
-import time
 import numpy as np
+import time
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
@@ -20,9 +20,9 @@ import numpy as np
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
 
 #use uma das 3 opcoes para atribuir à variável a porta usada
-#serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
+serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
-serialName = "COM4"                  # Windows(variacao de)
+#serialName = "ACM0"                  # Windows(variacao de)
 
 
 def main():
@@ -30,6 +30,8 @@ def main():
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
         com1 = enlace(serialName)
+        start_time = time.time()
+
         
     
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
@@ -50,7 +52,7 @@ def main():
         print("---------------------------")
         with open("./imgs/image.png", "rb") as image:
             txBuffer = image.read()
-        print(txBuffer.rx.getBufferLen())
+
 
 
 
@@ -67,10 +69,10 @@ def main():
           
         print("Transmitindo")
         com1.sendData(np.asarray(txBuffer))
-       
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # Tente entender como esse método funciona e o que ele retorna
-        txSize = com1.tx.getStatus()
+        tamanhoIm=len(txBuffer)
+        print(tamanhoIm)
         #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
         #Observe o que faz a rotina dentro do thread RX
         #print um aviso de que a recepção vai começar.
@@ -79,8 +81,7 @@ def main():
         #Veja o que faz a funcao do enlaceRX  getBufferLen
       
         #acesso aos bytes recebidos
-        txLen = len(txBuffer)
-        rxBuffer, nRx = com1.getData(txLen)
+        rxBuffer, nRx = com1.getData(tamanhoIm)
         print("recebeu {}" .format(rxBuffer))
 
         print("Salvando dados no arquivo")
@@ -94,7 +95,8 @@ def main():
         print("Comunicação encerrada")
         print("-------------------------")
         com1.disable()
-        
+        print("--- {:.4f} seconds ---".format(time.time() - start_time))
+
     except Exception as erro:
         print("ops! :-\\")
         print(erro)
