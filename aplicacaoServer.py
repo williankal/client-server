@@ -32,8 +32,9 @@ def main():
         com1 = enlace(serialName)
         start_time = time.time()
 
-        
-    
+
+        """ Lembrar de enviar comando por comando"""
+
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com1.enable()
         if com1.enable() == True:
@@ -44,23 +45,21 @@ def main():
         intc = int.from_bytes(tamComando, byteorder="big")
         print("Client enviou ", intc)
         com1.sendData(tamComando)
+        print(f"Resposta enviada: {tamComando}")
             
         #finalmente vamos transmitir os tados. Para isso usamos a funçao sendData que é um método da camada enlace.
         #faça um print para avisar que a transmissão vai começar.
         #tente entender como o método send funciona!
         #Cuidado! Apenas trasmitimos arrays de bytes! Nao listas!
 
-        #Veja o que faz a funcao do enlaceRX  getBufferLen
-      
         #acesso aos bytes recebidos
-        rxBuffer, nRx = com1.getData()
+        rxBuffer, nRx = com1.getData(intc)
         print("recebeu {}" .format(rxBuffer))
+        devolvendo = len(rxBuffer)
+        print(f"Devolvendo tamanho da lista de {devolvendo}")
+        com1.sendData(devolvendo.to_bytes(2, 'big'))
+        print("Tamanho da lista enviado")
 
-        print("Salvando dados no arquivo")
-        print("- {}".format(imageW))
-        f = open(imageW, 'wb')
-        f.write(rxBuffer)
-        f.close()
 
         # Encerra comunicação
         print("-------------------------")
