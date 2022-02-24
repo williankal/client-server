@@ -39,49 +39,21 @@ def main():
         if com1.enable() == True:
             print("Comunicação Aberta")
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
-        
-        #aqui você deverá gerar os dados a serem transmitidos. 
-        #seus dados a serem transmitidos são uma lista de bytes a serem transmitidos. Gere esta lista com o 
-        #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
-        imageR = "./imgs/image.png"
-        imageW = "./imgs/recebidaCopia.png"
-
-
-        print("Carregando imagem para transmissão")
-        print(".{}".format(imageR))
-        print("---------------------------")
-        with open("./imgs/image.png", "rb") as image:
-            txBuffer = image.read()
-
-
-
-
-    
-
-    
-        #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
-       
+        tamComando, nRx = com1.getData(2)
+        print("Tamanho do Comando", tamComando) 
+        intc = int.from_bytes(tamComando, byteorder="big")
+        print("Client enviou ", intc)
+        com1.sendData(tamComando)
             
         #finalmente vamos transmitir os tados. Para isso usamos a funçao sendData que é um método da camada enlace.
         #faça um print para avisar que a transmissão vai começar.
         #tente entender como o método send funciona!
         #Cuidado! Apenas trasmitimos arrays de bytes! Nao listas!
-          
-        print("Transmitindo")
-        com1.sendData(np.asarray(txBuffer))
-        # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
-        # Tente entender como esse método funciona e o que ele retorna
-        tamanhoIm=len(txBuffer)
-        print(tamanhoIm)
-        #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
-        #Observe o que faz a rotina dentro do thread RX
-        #print um aviso de que a recepção vai começar.
-        
-        #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
+
         #Veja o que faz a funcao do enlaceRX  getBufferLen
       
         #acesso aos bytes recebidos
-        rxBuffer, nRx = com1.getData(tamanhoIm)
+        rxBuffer, nRx = com1.getData()
         print("recebeu {}" .format(rxBuffer))
 
         print("Salvando dados no arquivo")
