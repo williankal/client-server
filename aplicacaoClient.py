@@ -28,12 +28,12 @@ serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 def comandos():
     n = random.randint(10,30)
     print(f"Essa lista tera {n}")
-    c1 = b'\x00' b'\xFF' b'\x00' b'\xFF'
-    c2 = b'\x00' b'\xFF' b'\xFF' b'\x00'
-    c3 = b'\xFF'
-    c4 = b'\x00'
-    c5 = b'\xFF' b'\x00'
-    c6 = b'\x00' b'\xFF'
+    c1 = [b'\x00' b'\xFF' b'\x00' b'\xFF']
+    c2 = [b'\x00' b'\xFF' b'\xFF' b'\x00']
+    c3 = [b'\xFF']
+    c4 = [b'\x00']
+    c5 = [b'\xFF' b'\x00']
+    c6 = [b'\x00' b'\xFF']
     cs = [c1,c2,c3, c4, c5, c6]
     i = 0
     cl = []
@@ -63,6 +63,7 @@ def main():
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         print("Carregando Lista de Comandos para transmissão")
         txBuffer = comandos()
+        print(txBuffer)
         tamanhoLista=len(txBuffer)
         print("Enviando Tamanho da lista")
         print("A lista tem {0} bytes".format(tamanhoLista.to_bytes(2, 'big')))
@@ -70,10 +71,10 @@ def main():
         print("Tamanho da lista enviado")
 
         print("Esperadno Confirmação")
-        time.sleep(1)
         tamComando, nRx = com1.getData(2)
         print("Tamanho do Comando", tamComando) 
         tamanhoRecebido = int.from_bytes(tamComando, byteorder="big")
+        print("tamanhoRecebido: " , tamanhoRecebido)
         if tamanhoLista == tamanhoRecebido:
             time.sleep(1)
             print("Tamanho CorreanhoRecebido:to")
@@ -83,6 +84,25 @@ def main():
         else:
             print('Tamanho Errado')
             print("Lista não enviada :(  ")
+
+        timer = time.time()
+
+        while timer <= 10:
+
+            resposta,nRx = com1.getData(2)
+            
+
+            
+            respostaInt = int.from_bytes(resposta, byteorder="big")
+            
+            if respostaInt != len(txBuffer):
+                print("erro")
+
+            else: 
+                print("okk!")
+            
+            print("A resposta é: ", respostaInt)
+        
 
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
 
@@ -107,11 +127,11 @@ def main():
         #acesso aos bytes recebidos
 
         # Encerra comunicação
-        print("-------------------------")
-        print("Comunicação encerrada")
-        print("-------------------------")
-        com1.disable()
-        print("--- {:.4f} seconds ---".format(time.time() - start_time))
+            print("-------------------------")
+            print("Comunicação encerrada")
+            print("-------------------------")
+            com1.disable()
+            print("--- {:.4f} seconds ---".format(time.time() - start_time))
 
     except Exception as erro:
         print("ops! :-\\")
