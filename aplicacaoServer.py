@@ -31,6 +31,8 @@ def main():
         #para declarar esse objeto é o nome da porta.
         com1 = enlace(serialName)
         start_time = time.time()
+        comandos = []
+        i = 0
 
 
         """ Lembrar de enviar comando por comando"""
@@ -53,9 +55,13 @@ def main():
         #Cuidado! Apenas trasmitimos arrays de bytes! Nao listas!
 
         #acesso aos bytes recebidos
-        rxBuffer, nRx = com1.getData(intc)
-        print("recebeu {}" .format(rxBuffer))
-        devolvendo = len(rxBuffer)
+        while i < tamComando:
+            rxBuffer, nRx = com1.getData(intc)
+            comandos.append(rxBuffer)
+            i += 1
+            
+        print("recebeu {}" .format(comandos))
+        devolvendo = len(comandos)
         print(f"Devolvendo tamanho da lista de {devolvendo}")
         com1.sendData(devolvendo.to_bytes(2, 'big'))
         print("Tamanho da lista enviado")

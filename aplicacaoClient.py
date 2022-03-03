@@ -76,11 +76,12 @@ def main():
         tamanhoRecebido = int.from_bytes(tamComando, byteorder="big")
         print("tamanhoRecebido: " , tamanhoRecebido)
         if tamanhoLista == tamanhoRecebido:
-            time.sleep(1)
+            time.sleep(0.1)
             print("Tamanho CorreanhoRecebido:to")
             print("Transmitindo Lista")
-            com1.sendData(np.asarray(txBuffer))
-            print("Enviado")
+            for i in txBuffer:
+                com1.sendData(np.asarray(i))
+                print("Enviado")
         else:
             print('Tamanho Errado')
             print("Lista não enviada :(  ")
