@@ -82,6 +82,7 @@ def main():
             for i in txBuffer:
                 com1.sendData(np.asarray(i))
                 print("Enviado")
+                time.sleep(0.2)
         else:
             print('Tamanho Errado')
             print("Lista não enviada :(  ")

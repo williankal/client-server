@@ -56,6 +56,7 @@ def main():
 
         #acesso aos bytes recebidos
         while i < tamComando:
+            time.sleep(0.1)
             rxBuffer, nRx = com1.getData(intc)
             comandos.append(rxBuffer)
             i += 1
