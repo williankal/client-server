@@ -37,11 +37,19 @@ def comandos():
     cs = [c1,c2,c3, c4, c5, c6]
     i = 0
     cl = []
+    cf = []
     while i < n:
         x = random.choice(cs)
+        cf.append(x)
+        if x == c1 or x == c2:
+            cl.append([(4).to_bytes(2, 'big')])
+        elif x == c3 or x == c4:
+            cl.append([(1).to_bytes(2, 'big')])
+        else:
+            cl.append([(2).to_bytes(2, 'big')])
         cl.append(x)
         i += 1
-    return cl
+    return cl, cf
 
 def main():
     try:
@@ -62,39 +70,41 @@ def main():
         #seus dados a serem transmitidos são uma lista de bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         print("Carregando Lista de Comandos para transmissão")
-        txBuffer = comandos()
+        txBuffer, comandofinal = comandos()
         print(txBuffer)
-        tamanhoLista=len(txBuffer)
+        tamanhoLista= (len(txBuffer))
         print("Enviando Tamanho da lista")
         print("A lista tem {0} bytes".format(tamanhoLista.to_bytes(2, 'big')))
         com1.sendData(tamanhoLista.to_bytes(2, 'big'))
         print("Tamanho da lista enviado")
 
-        print("Esperadno Confirmação")
+        print("Esperando Confirmação")
         tamComando, nRx = com1.getData(2)
         print("Tamanho do Comando", tamComando) 
         tamanhoRecebido = int.from_bytes(tamComando, byteorder="big")
-        print("tamanhoRecebido: " , tamanhoRecebido)
+        print("tamanhoRecebido: " , tamanhoRecebido/2)
+        
+        
         if tamanhoLista == tamanhoRecebido:
             time.sleep(0.1)
-            print("Tamanho CorreanhoRecebido:to")
+            print("Tamanho Correto Recebido:")
             print("Transmitindo Lista")
-            for i in txBuffer:
-                com1.sendData(np.asarray(i))
-                print("Enviado")
+            i = 0
+            while i < (tamanhoLista):
+                com1.sendData(np.asarray(txBuffer[i]))
                 time.sleep(0.2)
+                com1.sendData(np.asarray(txBuffer[i+1]))
+                print(f"Enviado {txBuffer[i+1]}" )
+                print(f"Comando: {int((i+1)/2)+1}")
+                time.sleep(0.2)
+                i += 2
         else:
             print('Tamanho Errado')
             print("Lista não enviada :(  ")
-
+        print(comandofinal)
         timer = time.time()
-
         while timer <= 10:
-
             resposta,nRx = com1.getData(2)
-            
-
-            
             respostaInt = int.from_bytes(resposta, byteorder="big")
             
             if respostaInt != len(txBuffer):
