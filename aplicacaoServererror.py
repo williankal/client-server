@@ -46,6 +46,7 @@ def main():
         print("Tamanho do Comando", tamComando) 
         intc = int.from_bytes(tamComando, byteorder="big")
         print("Client enviou ", intc/2)
+        time.sleep(11)
         com1.sendData(tamComando)
         print(f"Resposta enviada: {tamComando}")
             
